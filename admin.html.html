@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>نظام شركة السد العظيم - إدارة الأمن والمالية</title>
-
+  <title>بوابة مشروع سمنت الامير - مسؤول البوابة</title>
+  
   <!-- Google Fonts: Cairo -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,9 +13,6 @@
   <!-- Firebase CDN -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
-  <!-- html2pdf for Reports -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     :root {
@@ -31,227 +28,54 @@
       --danger-red: #ef4444;
       --warning-amber: #f59e0b;
       --success-green: #10b981;
-      --sidebar-width: 280px;
     }
 
-    * {
-      box-sizing: border-box;
-      font-family: 'Cairo', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
+    body { background-color: var(--bg-gradient); color: var(--text-dark); padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
 
-    body {
-      background-color: var(--bg-gradient);
-      color: var(--text-dark);
-      overflow-x: hidden;
-      display: flex;
-      min-height: 100vh;
-    }
-
-    /* === الشعار العام === */
-    .company-logo {
-      width: 75px;
-      height: 75px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid var(--accent-cyan);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      background: #fff;
-    }
-
-    /* === تسجيل الدخول === */
-    #login-page {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(circle at center, #0a2540 0%, #051124 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    .login-card {
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(10px);
-      padding: 40px 35px;
-      border-radius: 24px;
-      width: 90%;
-      max-width: 420px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-    .login-card .company-logo { margin-bottom: 15px; width: 90px; height: 90px; }
-    .login-card h2 { color: var(--primary-deep); font-size: 22px; font-weight: 900; margin-bottom: 4px; }
-    .login-card p { color: var(--text-muted); font-size: 13px; margin-bottom: 25px; }
-
-    /* === القائمة الجانبية (Sidebar) === */
-    .sidebar {
-      width: var(--sidebar-width);
-      background: var(--primary-deep);
-      color: #fff;
-      position: fixed;
-      top: 0; bottom: 0; right: 0;
-      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      box-shadow: -5px 0 25px rgba(0,0,0,0.15);
-    }
-    .sidebar.collapsed { right: calc(-1 * var(--sidebar-width)); }
-
-    .sidebar-header {
-      padding: 20px 16px;
-      background: rgba(0, 0, 0, 0.25);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-    .sidebar-header .title-text {
-      font-size: 15px;
-      font-weight: 800;
-      line-height: 1.3;
-    }
-
-    .sidebar-menu { list-style: none; padding: 15px 10px; flex: 1; overflow-y: auto; }
-    .sidebar-menu li {
-      padding: 12px 18px;
-      margin-bottom: 6px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 13.5px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: all 0.25s ease;
-      color: rgba(255, 255, 255, 0.75);
-    }
-    .sidebar-menu li:hover, .sidebar-menu li.active {
-      background: linear-gradient(90deg, var(--primary-dark), var(--primary-blue));
-      color: #fff;
-      transform: translateX(-4px);
-      box-shadow: 0 4px 15px rgba(0, 78, 203, 0.3);
-    }
-
-    /* === المحتوى الرئيسي والصفحات === */
-    .main-content {
-      margin-right: var(--sidebar-width);
-      flex: 1;
-      padding: 25px;
-      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .main-content.expanded { margin-right: 0; }
-
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 25px;
-      background: var(--card-white);
-      padding: 16px 24px;
-      border-radius: 18px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-      border: 1px solid var(--border-color);
-    }
-    .toggle-btn {
-      background: #eef2ff;
-      color: var(--primary-dark);
-      border: none;
-      padding: 10px 18px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 800;
-      transition: 0.2s;
-    }
-    .toggle-btn:hover { background: #e0e7ff; }
-
-    /* أنيميشن الانتقال الناعم */
-    .page-section {
-      display: none;
-      animation: pageMotion 0.35s ease-out forwards;
-    }
-    .page-section.active { display: block; }
-
-    @keyframes pageMotion {
-      from { opacity: 0; transform: translateY(12px) scale(0.99); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    /* الكروت */
-    .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 25px; }
-    .card-stat {
-      background: var(--card-white);
-      border-radius: 18px;
-      padding: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-      border: 1px solid var(--border-color);
-      position: relative;
-      overflow: hidden;
-    }
-    .card-stat::before {
-      content: '';
-      position: absolute;
-      top: 0; right: 0; left: 0; height: 4px;
-      background: linear-gradient(90deg, var(--primary-blue), var(--accent-cyan));
-    }
-    .card-stat h4 { font-size: 12.5px; color: var(--text-muted); font-weight: 700; }
-    .card-stat .value { font-size: 24px; font-weight: 900; color: var(--primary-deep); margin-top: 6px; }
-
-    /* صندوق المحتوى وميزة العلامة المائية للشعار الشفاف */
-    .content-box {
+    .mobile-card {
       background: var(--card-white);
       border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 22px;
+      padding: 20px;
+      width: 100%;
+      max-width: 480px;
       border: 1px solid var(--border-color);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
       position: relative;
-      overflow: hidden;
     }
 
-    /* العلامة المائية الشفافة للشعار بحواف دائرية (Rounded) */
-    .content-box::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 260px;
-      height: 260px;
-      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqbnLfvVmHN8o_qHzk6iYB4Q1eYZnto2pQyAP3w-OKdRRDe3ATfcn9dWw&s=10');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: contain;
-      opacity: 0.05;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .content-box > * {
-      position: relative;
-      z-index: 1;
-    }
-
-    .box-title { 
-      font-size: 16px; 
-      font-weight: 800; 
-      color: var(--primary-deep); 
-      margin-bottom: 18px; 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
+    .header-box {
+      text-align: center;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
       border-bottom: 2px solid #f1f5f9;
-      padding-bottom: 12px;
     }
+    .header-box img { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--accent-cyan); margin-bottom: 6px; object-fit: cover; }
+    .header-box h2 { font-size: 16px; font-weight: 900; color: var(--primary-deep); }
+    .header-box h3 { font-size: 13px; font-weight: 800; color: var(--primary-blue); }
 
-    /* النماذج */
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 15px; }
-    .form-group { margin-bottom: 10px; }
-    label { font-size: 12.5px; font-weight: 700; color: var(--text-dark); margin-bottom: 6px; display: block; }
-    input, select, textarea {
+    /* تنبيه الممنوعين الحاد */
+    #ban-alert-box {
+      display: none;
+      background: #fef2f2;
+      border: 2px solid var(--danger-red);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 15px;
+      text-align: center;
+      animation: shake 0.3s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    #ban-alert-box h4 { color: var(--danger-red); font-size: 14px; font-weight: 900; }
+    #ban-alert-box p { color: #991b1b; font-size: 12px; font-weight: 700; margin-top: 4px; }
+
+    .form-group { margin-bottom: 12px; }
+    label { font-size: 12.5px; font-weight: 700; color: var(--text-dark); margin-bottom: 5px; display: block; }
+    input, select {
       width: 100%;
       padding: 11px 14px;
       border: 1px solid var(--border-color);
@@ -260,484 +84,98 @@
       background: #f8fafc;
       transition: all 0.2s;
     }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-blue); background: #fff; box-shadow: 0 0 0 3px rgba(2, 136, 209, 0.12); }
+    input:focus, select:focus { outline: none; border-color: var(--primary-blue); background: #fff; box-shadow: 0 0 0 3px rgba(2, 136, 209, 0.12); }
 
-    /* الأزرار */
-    .btn {
+    .btn-submit {
+      width: 100%;
       background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue));
       color: #fff;
       border: none;
-      padding: 11px 22px;
+      padding: 12px;
       border-radius: 10px;
       font-weight: 800;
-      font-size: 13.5px;
+      font-size: 14px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+      margin-top: 10px;
+      box-shadow: 0 4px 12px rgba(2, 136, 209, 0.25);
+      transition: 0.2s;
     }
-    .btn:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(2, 136, 209, 0.25); }
-    .btn-danger { background: linear-gradient(135deg, #dc2626, #ef4444); }
-    .btn-success { background: linear-gradient(135deg, #059669, #10b981); }
-    .btn-warning { background: linear-gradient(135deg, #d97706, #f59e0b); color: #fff; }
+    .btn-submit:hover { opacity: 0.95; }
+    .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; }
 
-    /* الجداول */
-    .table-responsive { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; white-space: nowrap; }
-    th, td { padding: 13px 16px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 13px; }
-    th { background: #f1f5f9; color: var(--primary-deep); font-weight: 800; }
-    tr:hover td { background-color: #f8fafc; }
-
-    .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; display: inline-block; }
-    .badge-blue { background: #e0f2fe; color: #0369a1; }
-    .badge-green { background: #d1fae5; color: #047857; }
-    .badge-red { background: #fee2e2; color: #b91c1c; }
-    .badge-yellow { background: #fef3c7; color: #b45309; }
-
-    /* === قالب الطباعة الحديث المطور A4 === */
-    #a4-print-template {
-      display: none;
-      width: 210mm;
-      padding: 12mm 15mm;
-      background: #fff;
-      color: #0f172a;
-      direction: rtl;
-      position: relative;
+    .officer-badge {
+      background: rgba(2, 136, 209, 0.08);
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px dashed var(--primary-blue);
+      margin-bottom: 15px;
     }
-
-    /* العلامة المائية داخل الطباعة */
-    .print-watermark {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 320px;
-      height: 320px;
-      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqbnLfvVmHN8o_qHzk6iYB4Q1eYZnto2pQyAP3w-OKdRRDe3ATfcn9dWw&s=10');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      opacity: 0.06;
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .print-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 3px double #0a192f;
-      padding-bottom: 12px;
-      margin-bottom: 20px;
-    }
-
-    .print-header-info h2 { font-size: 20px; font-weight: 900; color: #0a192f; }
-    .print-header-info h4 { font-size: 13px; color: #0288d1; font-weight: 800; margin-top: 2px; }
-    .print-header-info p { font-size: 11px; color: #64748b; margin-top: 4px; }
-
-    .print-logo-box { text-align: center; }
-    .print-logo-box img {
-      width: 75px;
-      height: 75px;
-      border-radius: 50%;
-      border: 2px solid #0288d1;
-      object-fit: cover;
-    }
-
-    .print-meta-table {
-      width: 100%;
-      margin-bottom: 20px;
-      border-collapse: collapse;
-    }
-    .print-meta-table td {
-      padding: 6px 12px;
-      font-size: 12px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-    }
-
-    .print-main-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 30px;
-    }
-    .print-main-table th {
-      background: #0a192f !important;
-      color: #ffffff !important;
-      font-size: 12px;
-      padding: 10px;
-      border: 1px solid #0a192f;
-      text-align: center;
-    }
-    .print-main-table td {
-      padding: 9px 10px;
-      border: 1px solid #cbd5e1;
-      font-size: 11.5px;
-      text-align: center;
-    }
-
-    .print-footer-signatures {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 40px;
-      padding: 0 20px;
-    }
-    .sig-box {
-      text-align: center;
-      width: 200px;
-    }
-    .sig-box p { font-size: 12px; font-weight: 800; color: #0a192f; margin-bottom: 35px; }
-    .sig-line { border-bottom: 1px dashed #64748b; width: 100%; }
   </style>
 </head>
 <body>
 
-  <!-- 1. واجهة تسجيل الدخول -->
-  <div id="login-page">
-    <div class="login-card">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqbnLfvVmHN8o_qHzk6iYB4Q1eYZnto2pQyAP3w-OKdRRDe3ATfcn9dWw&s=10" alt="شعار شركة السد العظيم" class="company-logo">
-      <h2>شركة السد العظيم</h2>
-      <p>نظام إدارة الأمن والمالية والعمليات</p>
+  <div class="mobile-card">
+    <div class="header-box">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqbnLfvVmHN8o_qHzk6iYB4Q1eYZnto2pQyAP3w-OKdRRDe3ATfcn9dWw&s=10" alt="Logo">
+      <h2>شركة السد العظيم للأمن والحراسات</h2>
+      <h3>🏗️ بوابة مشروع سمنت الامير</h3>
+    </div>
+
+    <!-- تحذير الممنوعين -->
+    <div id="ban-alert-box">
+      <h4>🚫 تحذير أمني: الاسم أو المركبة محظورة!</h4>
+      <p id="ban-reason-text">سبب المنع: مدرج في قائمة الحظر المركزية</p>
+    </div>
+
+    <form id="gateForm">
+      <!-- اسم مسؤول الباب -->
+      <div class="officer-badge">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label style="color: var(--primary-dark);">👮 اسم مسؤول الباب المكلف</label>
+          <input type="text" id="officer-name" placeholder="أدخل اسمك الكامل..." required>
+        </div>
+      </div>
+
+      <!-- الفئات السبع المعتمدة في المنصة -->
       <div class="form-group">
-        <input type="text" id="login-user" placeholder="اسم المستخدم ">
+        <label>الفئة / نوع الحركة</label>
+        <select id="g-cat" onchange="updateGateFields()">
+          <option value="شاحنة حمل">🚛 شاحنة حمل</option>
+          <option value="شاحنة نقل">🚚 شاحنة نقل</option>
+          <option value="سيارة صغيرة">🚗 سيارة صغيرة</option>
+          <option value="آليات">🚜 آليات</option>
+          <option value="زائر">👤 زائر</option>
+          <option value="عامل">👷 عامل</option>
+          <option value="مقاول">🏗️ مقاول</option>
+        </select>
       </div>
+
+      <!-- اسم الشخص/السائق -->
       <div class="form-group">
-        <input type="password" id="login-pass" placeholder="كلمة المرور ">
-      </div>
-      <button class="btn" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="login()">تسجيل الدخول</button>
-    </div>
-  </div>
-
-  <!-- 2. القائمة الجانبية (Sidebar) -->
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqbnLfvVmHN8o_qHzk6iYB4Q1eYZnto2pQyAP3w-OKdRRDe3ATfcn9dWw&s=10" alt="Logo" class="company-logo" style="width: 50px; height: 50px;">
-      <div class="title-text">
-        <div>شركة السد العظيم</div>
-        <div style="font-size: 11px; opacity: 0.7;">إدارة الحراسات والعمليات</div>
-      </div>
-      <span style="cursor: pointer; margin-right: auto;" onclick="toggleSidebar()">✕</span>
-    </div>
-    <ul class="sidebar-menu">
-      <li class="active" onclick="switchSection('dashboard', this)">📊 لوحة التحكم القيادية</li>
-      <li onclick="switchSection('gate', this)">🚪 حركة البوابة والموقع</li>
-      <li onclick="switchSection('guards', this)">👥 الوجبات والكادر الأمني</li>
-      <li onclick="switchSection('weapons', this)">🔫 قسم الأسلحة والعتاد</li>
-      <li onclick="switchSection('posts', this)">🛡️ نقاط الحراسة والأبراج</li>
-      <li onclick="switchSection('fines', this)">⚠️ قسم الغرامات والجزاءات</li>
-      <li onclick="switchSection('salaries', this)">💵 قسم الرواتب والمسيرات</li>
-      <li onclick="switchSection('custody', this)">🏛️ قسم العهد المالية والصندوق</li>
-      <li onclick="switchSection('users', this)">⚙️ الصلاحيات والحسابات</li>
-    </ul>
-  </div>
-
-  <!-- 3. منطقة العمل الرئيسية -->
-  <div class="main-content" id="main-content">
-    
-    <!-- الشريط العلوي -->
-    <div class="top-bar">
-      <button class="toggle-btn" onclick="toggleSidebar()">☰ القائمة التنفيذية</button>
-      <div style="font-weight: 800; color: var(--primary-deep); font-size: 13.5px;">
-        المستخدم: <span id="current-user-name" style="color: var(--primary-blue);">المدير العام</span> | الصلاحية: <span id="current-user-role" class="badge badge-blue">مدير النظام</span>
-      </div>
-      <button class="btn btn-danger" style="padding: 7px 15px; font-size: 12px;" onclick="logout()">تسجيل خروج</button>
-    </div>
-
-    <!-- قسم 1: لوحة التحكم الشاملة -->
-    <div id="section-dashboard" class="page-section active">
-      <div class="grid-cards">
-        <div class="card-stat"><h4>الموجودون بالموقع</h4><div class="value" id="dash-active">0</div></div>
-        <div class="card-stat"><h4>إجمالي قوة الحراس</h4><div class="value" id="dash-guards">0</div></div>
-        <div class="card-stat"><h4>قطع الأسلحة المسلمة</h4><div class="value" id="dash-weapons">0</div></div>
-        <div class="card-stat"><h4>إجمالي الغرامات</h4><div class="value" id="dash-fines" style="color: var(--danger-red);">0 د.ع</div></div>
-        <div class="card-stat"><h4>مجموع العهد والصندوق</h4><div class="value" id="dash-custody" style="color: var(--success-green);">0 د.ع</div></div>
+        <label id="lbl-g-name">اسم السائق الثلاثي</label>
+        <input type="text" id="g-name" placeholder="أدخل الاسم..." oninput="checkBannedStatus()" required>
       </div>
 
-      <div class="content-box">
-        <div class="box-title">شركة السد العظيم - لوحة المتابعة المباشرة</div>
-        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.8;">
-          أهلاً بكم في نظام إدارة العمليات الموحد لشركة السد العظيم. يتيح لك النظام متابعة حركة الدخول والخروج، توزيع الوجبات والأسلحة، واستخرج تقارير الرواتب والغرامات بدقة عالية.
-        </p>
-      </div>
-    </div>
-
-    <!-- قسم 2: حركة البوابة الديناميكية -->
-    <div id="section-gate" class="page-section">
-      <div class="content-box">
-        <div class="box-title">تسجيل حركة الدخول للبوابة</div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>الفئة / نوع الحركة</label>
-            <select id="g-cat" onchange="updateGateFields()">
-              <option value="شاحنة حمل">شاحنة حمل</option>
-              <option value="آلية عمل">آلية عمل</option>
-              <option value="سيارة صغيرة">سيارة صغيرة</option>
-              <option value="زائر">زائر</option>
-              <option value="عامل">عامل</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label id="lbl-g-name">الاسم الكامل / سائق الشاحنة</label>
-            <input type="text" id="g-name" placeholder="أدخل الاسم...">
-          </div>
-          <div class="form-group" id="group-num">
-            <label id="lbl-g-num">رقم المركبة / الشاحنة</label>
-            <input type="text" id="g-num" placeholder="الرقم...">
-          </div>
-          <div class="form-group" id="group-cargo">
-            <label id="lbl-g-cargo">نوع الحمولة / المواد</label>
-            <input type="text" id="g-cargo" placeholder="نوع المادة...">
-          </div>
-          <div class="form-group" id="group-dest">
-            <label id="lbl-g-dest">الجهة المستلمة / القادم إليها</label>
-            <input type="text" id="g-dest" placeholder="الجهة...">
-          </div>
-        </div>
-        <button class="btn" onclick="addGateRecord()">تأكيد وتسجيل الدخول</button>
+      <!-- رقم المركبة / الهوية -->
+      <div class="form-group">
+        <label id="lbl-g-num">رقم المركبة / الشاحنة</label>
+        <input type="text" id="g-num" placeholder="الرقم..." oninput="checkBannedStatus()">
       </div>
 
-      <div class="content-box">
-        <div class="box-title">السجل المباشر للموجودين داخل الموقع</div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr><th>#</th><th>الاسم / السائق</th><th>الفئة</th><th>الرقم / الهاتف</th><th>الحمولة / السبب</th><th>الجهة / الوجهة</th><th>وقت الدخول</th><th>الإجراء</th></tr>
-            </thead>
-            <tbody id="gate-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- قسم 3: الوجبات والكادر -->
-    <div id="section-guards" class="page-section">
-      <div class="content-box">
-        <div class="box-title">
-          <span>إدارة الوجبات والمنتسبين</span>
-          <button class="btn btn-success" onclick="printAttendanceA4()">📄 طباعة سجل الحضور اليومي (A4)</button>
-        </div>
-        <div class="form-grid">
-          <div class="form-group"><label>اسم المنتسب</label><input type="text" id="guard-name" placeholder="اسم الحارس الثلاثي..."></div>
-          <div class="form-group"><label>رقم الهاتف</label><input type="text" id="guard-phone" placeholder="07XXXXXXXXX"></div>
-          <div class="form-group"><label>الوجبة</label><select id="guard-shift"><option>الوجبة الأولى</option><option>الوجبة الثانية</option></select></div>
-          <div class="form-group"><label>المسمى الوظيفي</label><select id="guard-title"><option>حارس أمني</option><option>سوبر فايزر</option><option>مراقب كاميرات</option><option>دورية سيارة</option></select></div>
-          <div class="form-group"><label>الراتب الإسمي (د.ع)</label><input type="number" id="guard-salary" placeholder="مثال: 600000"></div>
-        </div>
-        <button class="btn" onclick="addGuard()">إضافة منتسب جديد</button>
+      <!-- الحمولة / الملاحظات -->
+      <div class="form-group">
+        <label id="lbl-g-cargo">نوع الحمولة / المادة</label>
+        <input type="text" id="g-cargo" placeholder="التفاصيل...">
       </div>
 
-      <div class="content-box">
-        <div class="box-title">قائمة الكادر الأمني المسجل</div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr><th>#</th><th>الاسم</th><th>الهاتف</th><th>الوجبة</th><th>المسمى الوظيفي</th><th>الراتب الأساسي</th><th>الإجراء</th></tr>
-            </thead>
-            <tbody id="guards-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- قسم 4: قسم الأسلحة -->
-    <div id="section-weapons" class="page-section">
-      <div class="content-box">
-        <div class="box-title">إدارة وتسليم الأسلحة والعتاد</div>
-        <div class="form-grid">
-          <div class="form-group"><label>نوع السلاح</label><input type="text" id="w-type" placeholder="مثال: بندقية M4 / كلاشنيكوف"></div>
-          <div class="form-group"><label>رقم هويّة السلاح</label><input type="text" id="w-id" placeholder="الرقم التسلسلي..."></div>
-          <div class="form-group"><label>عدد العتاد / المخازن</label><input type="text" id="w-ammo" placeholder="مثال: 4 مخازن + 120 إطلاقة"></div>
-          <div class="form-group"><label>اسم المستلم</label><input type="text" id="w-user" placeholder="اسم المنتسب المستلم..."></div>
-          <div class="form-group"><label>حالة السلاح</label><select id="w-status"><option>جاهز وسليم</option><option>يحتاج صيانة</option><option>معطوب</option></select></div>
-        </div>
-        <button class="btn" onclick="addWeapon()">تسجيل استلام السلاح</button>
+      <!-- الوجهة / الجهة المستلمة -->
+      <div class="form-group">
+        <label id="lbl-g-dest">الجهة المستلمة / الوجهة</label>
+        <input type="text" id="g-dest" placeholder="الجهة القادم إليها...">
       </div>
 
-      <div class="content-box">
-        <div class="box-title">سجل العتاد والأسلحة المستلمة</div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr><th>#</th><th>نوع السلاح</th><th>رقم الهوية</th><th>العتاد</th><th>المستلم</th><th>الحالة</th><th>الإجراء</th></tr>
-            </thead>
-            <tbody id="weapons-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- قسم 5: نقاط الحراسة -->
-    <div id="section-posts" class="page-section">
-      <div class="content-box">
-        <div class="box-title">توزيع نقاط الحراسة والأبراج</div>
-        <div class="form-grid">
-          <div class="form-group"><label>اسم النقطة / البرج</label><input type="text" id="post-name" placeholder="مثال: البرج الجنوبي 2"></div>
-          <div class="form-group"><label>نوع التجهيز</label><select id="post-type"><option>برج مراقبة</option><option>بوابة رئيسية</option><option>دورية راجلة</option></select></div>
-          <div class="form-group"><label>عدد الأفراد</label><input type="number" id="post-count" placeholder="عدد الحراس..."></div>
-          <div class="form-group"><label>أسماء المكلفين</label><input type="text" id="post-guards" placeholder="أسماء الحراس في النقطة..."></div>
-        </div>
-        <button class="btn" onclick="addPost()">توزيع وحفظ النقطة</button>
-      </div>
-
-      <div class="content-box">
-        <div class="box-title">جدول توزيع الأبراج والنقاط الحالية</div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr><th>#</th><th>اسم النقطة</th><th>النوع</th><th>عدد الأفراد</th><th>أسماء المكلفين</th><th>الإجراء</th></tr>
-            </thead>
-            <tbody id="posts-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- قسم 6: الغرامات والجزاءات -->
-    <div id="section-fines" class="page-section">
-      <div class="content-box">
-        <div class="box-title">
-          <span>تسجيل الغرامات والمخالفات</span>
-          <button class="btn btn-warning" onclick="printFinesA4()">📄 طباعة كشف الغرامات</button>
-        </div>
-        <div class="form-grid">
-          <div class="form-group"><label>اسم المخالف (منتسب/سائق)</label><input type="text" id="f-name" placeholder="الاسم..."></div>
-          <div class="form-group"><label>سبب المخالفة / الغرامة</label><input type="text" id="f-reason" placeholder="مثال: تأخير / ترك النقطة / مخالفة"></div>
-          <div class="form-group"><label>مبلغ الغرامة (د.ع)</label><input type="number" id="f-amount" placeholder="المبلغ..."></div>
-          <div class="form-group"><label>حالة الاستقطاع</label><select id="f-status"><option>تخصم من الراتب</option><option>تم الدفع نقداً</option><option>معلقة</option></select></div>
-        </div>
-        <button class="btn btn-danger" onclick="addFine()">فرض وتثبيت الغرامة</button>
-      </div>
-
-      <div class="content-box">
-        <div class="box-title">سجل المخالفات والغرامات المسجلة</div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr><th>#</th><th>اسم المخالف</th><th>سبب المخالفة</th><th>المبلغ</th><th>التاريخ</th><th>الحالة</th><th>الإجراء</th></tr>
-            </thead>
-            <tbody id="fines-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- قسم 7: الرواتب والمسيرات -->
-    <div id="section-salaries" class="page-section">
-      <div class="content-box">
-        <div class="box-title">
-          <span>مسير الرواتب والاستقطاعات</span>
-          <button class="btn btn-success" onclick="printPayrollA4()">📄 طباعة مسير الرواتب الشامل</button>
-        </div>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">
-          يتم احتساب صافي الراتب بخصم الغرامات والجزاءات المخصومة تلقائياً.
-        </p>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr><th>#</th><th>اسم المنتسب</th><th>المسمى الوظيفي</th><th>الراتب الأساسي</th><th>إجمالي الغرامات</th><th>صافي الراتب المستحق</th><th>توقيع الاستلام</th></tr>
-            </thead>
-            <tbody id="salaries-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- قسم 8: العهد المالية والصندوق -->
-    <div id="section-custody" class="page-section">
-      <div class="content-box">
-        <div class="box-title">إدارة السلف والعهد المالية والصندوق</div>
-        <div class="form-grid">
-          <div class="form-group"><label>اسم المسؤول / المستلم</label><input type="text" id="c-name" placeholder="اسم مسؤول العهدة..."></div>
-          <div class="form-group"><label>عنوان السلفة / العهدة</label><input type="text" id="c-title" placeholder="مثال: نثرية البوابة / الوقود"></div>
-          <div class="form-group"><label>المبلغ المستلم (د.ع)</label><input type="number" id="c-amount" placeholder="المبلغ..."></div>
-          <div class="form-group"><label>المبلغ المصروف (د.ع)</label><input type="number" id="c-spent" value="0"></div>
-        </div>
-        <button class="btn" onclick="addCustody()">تسجيل وتثبيت العهدة</button>
-      </div>
-
-      <div class="content-box">
-        <div class="box-title">سجل الصندوق والعهد المالية الحالية</div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr><th>#</th><th>المسؤول</th><th>عنوان العهدة</th><th>المبلغ الإجمالي</th><th>المصروف</th><th>المتبقي بالصندوق</th><th>الإجراء</th></tr>
-            </thead>
-            <tbody id="custody-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- قسم 9: المستخدمين والصلاحيات -->
-    <div id="section-users" class="page-section">
-      <div class="content-box">
-        <div class="box-title">إدارة مستخدمي المنصة والصلاحيات</div>
-        <div class="form-grid">
-          <div class="form-group"><label>اسم المستخدم</label><input type="text" id="u-name" placeholder="اسم الدخول..."></div>
-          <div class="form-group"><label>كلمة المرور</label><input type="password" id="u-pass" placeholder="***"></div>
-          <div class="form-group"><label>درجة الصلاحية</label><select id="u-role"><option>مدير نظام كامل</option><option>حارس أمني</option><option>مسؤول بوابة</option><option>مراقب كاميرات</option><option>سوبر فايزر حراسات</option><option>محاسب ومالية</option></select></div>
-        </div>
-        <button class="btn" onclick="addUser()">إنشاء حساب جديد</button>
-      </div>
-
-      <div class="content-box">
-        <div class="box-title">قائمة الحسابات المفعلة</div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr><th>#</th><th>اسم المستخدم</th><th>الصلاحية</th><th>تاريخ الإنشاء</th><th>الإجراء</th></tr>
-            </thead>
-            <tbody id="users-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- 4. قالب الطباعة المدروس والحديث A4 مع الشعار -->
-  <div id="a4-print-template">
-    <div class="print-watermark"></div>
-    
-    <div class="print-header">
-      <div class="print-header-info">
-        <h2>شركة السد العظيم للأمن والحراسات</h2>
-        <h4 id="print-title">تقرير العمليات الرسمي</h4>
-        <p>نظام الإدارة والسيطرة المركزية - قسم المتابعة والتدقيق</p>
-      </div>
-      <div class="print-logo-box">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqbnLfvVmHN8o_qHzk6iYB4Q1eYZnto2pQyAP3w-OKdRRDe3ATfcn9dWw&s=10" alt="Logo">
-      </div>
-    </div>
-
-    <table class="print-meta-table">
-      <tr>
-        <td><strong>تاريخ التصدير:</strong> <span id="print-date">--</span></td>
-        <td><strong>وقت الطباعة:</strong> <span id="print-time">--</span></td>
-        <td><strong>جهة التقرير:</strong> إدارة العمليات والمالية</td>
-      </tr>
-    </table>
-
-    <table class="print-main-table">
-      <thead id="print-thead"></thead>
-      <tbody id="print-tbody"></tbody>
-    </table>
-
-    <div class="print-footer-signatures">
-      <div class="sig-box">
-        <p>توقيع مسؤول القسم</p>
-        <div class="sig-line"></div>
-      </div>
-      <div class="sig-box">
-        <p>ختم وتصديق الشركة</p>
-        <div class="sig-line"></div>
-      </div>
-      <div class="sig-box">
-        <p>اعتماد المدير العام</p>
-        <div class="sig-line"></div>
-      </div>
-    </div>
+      <button type="submit" id="btn-save" class="btn-submit">تأكيد وتسجيل الدخول للموقع</button>
+    </form>
   </div>
 
   <script>
@@ -750,42 +188,18 @@
       messagingSenderId: "396326956695",
       appId: "1:396326956695:web:e290603d522a0f879683d2"
     };
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.database();
 
-    let currentUser = null;
-    let cacheGuards = [], cacheFines = [];
+    let cacheBannedList = [];
 
-    function login() {
-      const u = document.getElementById('login-user').value.trim();
-      const p = document.getElementById('login-pass').value.trim();
-      if(u === 'admin' && p === '1234') {
-        currentUser = { name: 'المدير العام', role: 'مدير نظام كامل' };
-        document.getElementById('login-page').style.display = 'none';
-        document.getElementById('current-user-name').innerText = currentUser.name;
-        document.getElementById('current-user-role').innerText = currentUser.role;
-        loadAllData();
-        updateGateFields();
-      } else {
-        alert('بيانات الدخول غير صحيحة!');
-      }
-    }
+    // جلب أسماء المحظورين من المنصة الرئيسية فورياً
+    db.ref('banned_list').on('value', snap => {
+      const data = snap.val() || {};
+      cacheBannedList = Object.values(data);
+    });
 
-    function logout() { location.reload(); }
-
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('collapsed');
-      document.getElementById('main-content').classList.toggle('expanded');
-    }
-
-    function switchSection(id, el) {
-      document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.sidebar-menu li').forEach(l => l.classList.remove('active'));
-      document.getElementById(`section-${id}`).classList.add('active');
-      el.classList.add('active');
-    }
-
-    /* تغيير الحقول ديناميكياً بحسب الفئة المحددة في البوابة */
+    // تحديث مسميات الحقول الديناميكية للفئات السبع
     function updateGateFields() {
       const cat = document.getElementById('g-cat').value;
       const lblName = document.getElementById('lbl-g-name');
@@ -793,315 +207,101 @@
       const lblCargo = document.getElementById('lbl-g-cargo');
       const lblDest = document.getElementById('lbl-g-dest');
 
-      if (cat === 'شاحنة حمل' || cat === 'آلية عمل') {
+      if (cat === 'شاحنة حمل' || cat === 'شاحنة نقل') {
         lblName.innerText = "اسم السائق الثلاثي";
-        lblNum.innerText = "رقم المركبة / الآلية";
-        lblCargo.innerText = "نوع الحمولة / المادة";
-        lblDest.innerText = "الجهة المستلمة / المفرغة";
+        lblNum.innerText = "رقم المركبة / الشاحنة";
+        lblCargo.innerText = "نوع الحمولة / رقم المانفيست";
+        lblDest.innerText = "الجهة المستلمة / الشركة الناقلة";
+      } else if (cat === 'آليات') {
+        lblName.innerText = "اسم المشغل / السائق";
+        lblNum.innerText = "رقم / ترميز الآلية";
+        lblCargo.innerText = "نوع الآلية (شفل، حفارة...)";
+        lblDest.innerText = "القسم التابع له / الموقع";
       } else if (cat === 'سيارة صغيرة') {
-        lblName.innerText = "اسم السائق";
+        lblName.innerText = "اسم السائق / المسؤول";
         lblNum.innerText = "رقم السيارة / المحافظة";
-        lblCargo.innerText = "ملاحظات الحمولة / الأغراض";
+        lblCargo.innerText = "عدد الركاب / ملاحظات الحمولة";
         lblDest.innerText = "المقصد / القسم الزائر له";
-      } else if (cat === 'زائر' || cat === 'عامل') {
-        lblName.innerText = "الاسم الكامل للشاعر/الزائر";
+      } else if (cat === 'زائر') {
+        lblName.innerText = "الاسم الكامل للزائر";
         lblNum.innerText = "رقم الهوية / الهاتف";
-        lblCargo.innerText = "سبب الدخول / طبيعة العمل";
+        lblCargo.innerText = "سبب الزيارة / طبيعة العمل";
         lblDest.innerText = "الجهة القادم إليها / المسؤول";
+      } else if (cat === 'عامل' || cat === 'مقاول') {
+        lblName.innerText = "الاسم الكامل";
+        lblNum.innerText = "رقم الهوية / الهاتف";
+        lblCargo.innerText = "المسمى الوظيفي / الاختصاص";
+        lblDest.innerText = "اسم الشركة / المقاولة / موقع العمل";
+      }
+      checkBannedStatus();
+    }
+
+    // التحقق اللحظي من الحظر أثناء الكتابة
+    function checkBannedStatus() {
+      const nameVal = document.getElementById('g-name').value.trim().toLowerCase();
+      const numVal = document.getElementById('g-num').value.trim().toLowerCase();
+      const alertBox = document.getElementById('ban-alert-box');
+      const btnSave = document.getElementById('btn-save');
+      const reasonText = document.getElementById('ban-reason-text');
+
+      if (!nameVal && !numVal) {
+        alertBox.style.display = 'none';
+        btnSave.disabled = false;
+        return;
+      }
+
+      const foundBan = cacheBannedList.find(item => {
+        const matchName = item.name && nameVal && item.name.toLowerCase().includes(nameVal);
+        const matchNum = item.num && numVal && item.num.toLowerCase().includes(numVal);
+        return matchName || matchNum;
+      });
+
+      if (foundBan) {
+        alertBox.style.display = 'block';
+        reasonText.innerText = `سبب المنع: ${foundBan.reason || 'مدرج في قائمة الحظر المركزية'}`;
+        btnSave.disabled = true;
+      } else {
+        alertBox.style.display = 'none';
+        btnSave.disabled = false;
       }
     }
 
-    function loadAllData() {
-      // 1. البوابة
-      db.ref('active_records').on('value', snap => {
-        const data = snap.val() || {};
-        const keys = Object.keys(data);
-        document.getElementById('dash-active').innerText = keys.length;
-        const tbody = document.getElementById('gate-table-body');
-        tbody.innerHTML = keys.map((k, i) => `
-          <tr>
-            <td>${i+1}</td>
-            <td><strong>${data[k].name}</strong></td>
-            <td><span class="badge badge-blue">${data[k].cat}</span></td>
-            <td>${data[k].num || '-'}</td>
-            <td>${data[k].cargo || '-'}</td>
-            <td>${data[k].dest || '-'}</td>
-            <td>${data[k].time}</td>
-            <td><button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="delItem('active_records/${k}')">تسجيل خروج</button></td>
-          </tr>
-        `).join('');
-      });
+    // إرسال الحركات المباشرة للمنصة الرئيسية
+    document.getElementById('gateForm').addEventListener('submit', function(e) {
+      e.preventDefault();
 
-      // 2. الكادر
-      db.ref('guards').on('value', snap => {
-        const data = snap.val() || {};
-        cacheGuards = Object.values(data);
-        document.getElementById('dash-guards').innerText = cacheGuards.length;
-        const tbody = document.getElementById('guards-table-body');
-        tbody.innerHTML = Object.keys(data).map((k, i) => `
-          <tr>
-            <td>${i+1}</td>
-            <td><strong>${data[k].name}</strong></td>
-            <td>${data[k].phone || '-'}</td>
-            <td><span class="badge badge-blue">${data[k].shift}</span></td>
-            <td>${data[k].title}</td>
-            <td>${Number(data[k].salary || 0).toLocaleString()} د.ع</td>
-            <td><button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="delItem('guards/${k}')">حذف</button></td>
-          </tr>
-        `).join('');
-        renderSalaries();
-      });
-
-      // 3. الأسلحة
-      db.ref('weapons').on('value', snap => {
-        const data = snap.val() || {};
-        const keys = Object.keys(data);
-        document.getElementById('dash-weapons').innerText = keys.length;
-        const tbody = document.getElementById('weapons-table-body');
-        tbody.innerHTML = keys.map((k, i) => `
-          <tr>
-            <td>${i+1}</td>
-            <td><strong>${data[k].type}</strong></td>
-            <td>${data[k].id}</td>
-            <td>${data[k].ammo}</td>
-            <td>${data[k].user}</td>
-            <td><span class="badge badge-green">${data[k].status}</span></td>
-            <td><button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="delItem('weapons/${k}')">حذف</button></td>
-          </tr>
-        `).join('');
-      });
-
-      // 4. النقاط
-      db.ref('posts').on('value', snap => {
-        const data = snap.val() || {};
-        const tbody = document.getElementById('posts-table-body');
-        tbody.innerHTML = Object.keys(data).map((k, i) => `
-          <tr>
-            <td>${i+1}</td>
-            <td><strong>${data[k].name}</strong></td>
-            <td><span class="badge badge-blue">${data[k].type}</span></td>
-            <td>${data[k].count}</td>
-            <td>${data[k].guards}</td>
-            <td><button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="delItem('posts/${k}')">حذف</button></td>
-          </tr>
-        `).join('');
-      });
-
-      // 5. الغرامات
-      db.ref('fines').on('value', snap => {
-        const data = snap.val() || {};
-        cacheFines = Object.values(data);
-        let totalFines = 0;
-        const tbody = document.getElementById('fines-table-body');
-        tbody.innerHTML = Object.keys(data).map((k, i) => {
-          totalFines += Number(data[k].amount || 0);
-          return `
-            <tr>
-              <td>${i+1}</td>
-              <td><strong>${data[k].name}</strong></td>
-              <td>${data[k].reason}</td>
-              <td style="color:var(--danger-red); font-weight:800;">${Number(data[k].amount).toLocaleString()} د.ع</td>
-              <td>${data[k].date}</td>
-              <td><span class="badge badge-yellow">${data[k].status}</span></td>
-              <td><button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="delItem('fines/${k}')">حذف</button></td>
-            </tr>
-          `;
-        }).join('');
-        document.getElementById('dash-fines').innerText = totalFines.toLocaleString() + ' د.ع';
-        renderSalaries();
-      });
-
-      // 6. العهد
-      db.ref('custody').on('value', snap => {
-        const data = snap.val() || {};
-        let totalVault = 0;
-        const tbody = document.getElementById('custody-table-body');
-        tbody.innerHTML = Object.keys(data).map((k, i) => {
-          const rem = Number(data[k].amount) - Number(data[k].spent);
-          totalVault += rem;
-          return `
-            <tr>
-              <td>${i+1}</td>
-              <td><strong>${data[k].name}</strong></td>
-              <td>${data[k].title}</td>
-              <td>${Number(data[k].amount).toLocaleString()} د.ع</td>
-              <td style="color:var(--danger-red);">${Number(data[k].spent).toLocaleString()} د.ع</td>
-              <td style="color:var(--success-green); font-weight:800;">${rem.toLocaleString()} د.ع</td>
-              <td><button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="delItem('custody/${k}')">حذف</button></td>
-            </tr>
-          `;
-        }).join('');
-        document.getElementById('dash-custody').innerText = totalVault.toLocaleString() + ' د.ع';
-      });
-
-      // 7. المستخدمين
-      db.ref('users').on('value', snap => {
-        const data = snap.val() || {};
-        const tbody = document.getElementById('users-table-body');
-        tbody.innerHTML = Object.keys(data).map((k, i) => `
-          <tr>
-            <td>${i+1}</td>
-            <td><strong>${data[k].name}</strong></td>
-            <td><span class="badge badge-blue">${data[k].role}</span></td>
-            <td>${data[k].date}</td>
-            <td><button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="delItem('users/${k}')">حذف</button></td>
-          </tr>
-        `).join('');
-      });
-    }
-
-    function renderSalaries() {
-      const tbody = document.getElementById('salaries-table-body');
-      if(!tbody) return;
-      tbody.innerHTML = cacheGuards.map((g, i) => {
-        const userFines = cacheFines
-          .filter(f => f.name.trim() === g.name.trim() && f.status === 'تخصم من الراتب')
-          .reduce((sum, f) => sum + Number(f.amount || 0), 0);
-        
-        const baseSalary = Number(g.salary || 0);
-        const netSalary = Math.max(0, baseSalary - userFines);
-
-        return `
-          <tr>
-            <td>${i+1}</td>
-            <td><strong>${g.name}</strong></td>
-            <td>${g.title}</td>
-            <td>${baseSalary.toLocaleString()} د.ع</td>
-            <td style="color:var(--danger-red); font-weight:800;">${userFines.toLocaleString()} د.ع</td>
-            <td style="color:var(--success-green); font-weight:900; font-size:14px;">${netSalary.toLocaleString()} د.ع</td>
-            <td style="border-bottom: 1px dashed #ccc;"></td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function addGateRecord() {
+      const officer = document.getElementById('officer-name').value.trim();
       const name = document.getElementById('g-name').value.trim();
-      if(!name) return alert('يرجى ادخال الاسم');
-      db.ref('active_records').push({
-        name, cat: document.getElementById('g-cat').value,
-        num: document.getElementById('g-num').value,
-        cargo: document.getElementById('g-cargo').value,
-        dest: document.getElementById('g-dest').value,
+
+      if (!officer) return alert('يرجى كتابة اسم مسؤول الباب أولاً');
+      if (!name) return alert('يرجى ادخال الاسم الكامل');
+
+      const payload = {
+        officer: officer,
+        cat: document.getElementById('g-cat').value,
+        f1: name,
+        f2: document.getElementById('g-num').value.trim(),
+        f3: document.getElementById('g-dest').value.trim(),
+        f4: document.getElementById('g-cargo').value.trim(),
         time: new Date().toLocaleTimeString('ar-IQ')
+      };
+
+      db.ref('active_records').push(payload).then(() => {
+        alert('✅ تم تسجيل الدخول بنجاح وإرسال السجل للمنصة الرئيسية!');
+        document.getElementById('g-name').value = '';
+        document.getElementById('g-num').value = '';
+        document.getElementById('g-cargo').value = '';
+        document.getElementById('g-dest').value = '';
+        checkBannedStatus();
+      }).catch(err => {
+        alert('حدث خطأ أثناء الاتصال بالمنصة: ' + err.message);
       });
-      document.getElementById('g-name').value = '';
-      document.getElementById('g-num').value = '';
-      document.getElementById('g-cargo').value = '';
-      document.getElementById('g-dest').value = '';
-    }
+    });
 
-    function addGuard() {
-      const name = document.getElementById('guard-name').value.trim();
-      if(!name) return alert('يرجى ادخال الاسم');
-      db.ref('guards').push({
-        name, phone: document.getElementById('guard-phone').value,
-        shift: document.getElementById('guard-shift').value,
-        title: document.getElementById('guard-title').value,
-        salary: document.getElementById('guard-salary').value || 0
-      });
-      document.getElementById('guard-name').value = '';
-    }
-
-    function addWeapon() {
-      const type = document.getElementById('w-type').value.trim();
-      if(!type) return alert('يرجى اختيار نوع السلاح');
-      db.ref('weapons').push({
-        type, id: document.getElementById('w-id').value,
-        ammo: document.getElementById('w-ammo').value,
-        user: document.getElementById('w-user').value,
-        status: document.getElementById('w-status').value
-      });
-      document.getElementById('w-type').value = '';
-    }
-
-    function addPost() {
-      const name = document.getElementById('post-name').value.trim();
-      if(!name) return;
-      db.ref('posts').push({
-        name, type: document.getElementById('post-type').value,
-        count: document.getElementById('post-count').value,
-        guards: document.getElementById('post-guards').value
-      });
-      document.getElementById('post-name').value = '';
-    }
-
-    function addFine() {
-      const name = document.getElementById('f-name').value.trim();
-      if(!name) return alert('أدخل اسم المخالف');
-      db.ref('fines').push({
-        name, reason: document.getElementById('f-reason').value,
-        amount: document.getElementById('f-amount').value || 0,
-        status: document.getElementById('f-status').value,
-        date: new Date().toLocaleDateString('ar-IQ')
-      });
-      document.getElementById('f-name').value = '';
-    }
-
-    function addCustody() {
-      const name = document.getElementById('c-name').value.trim();
-      if(!name) return;
-      db.ref('custody').push({
-        name, title: document.getElementById('c-title').value,
-        amount: document.getElementById('c-amount').value || 0,
-        spent: document.getElementById('c-spent').value || 0
-      });
-      document.getElementById('c-name').value = '';
-    }
-
-    function addUser() {
-      const name = document.getElementById('u-name').value.trim();
-      if(!name) return;
-      db.ref('users').push({
-        name, pass: document.getElementById('u-pass').value,
-        role: document.getElementById('u-role').value,
-        date: new Date().toLocaleDateString('ar-IQ')
-      });
-      document.getElementById('u-name').value = '';
-    }
-
-    function delItem(path) { db.ref(path).remove(); }
-
-    function printAttendanceA4() {
-      exportPDF('سجل حضور المنتسبين والكادر اليومي', 
-        '<tr><th>ت</th><th>اسم المنتسب</th><th>الوجبة</th><th>المسمى الوظيفي</th><th>التوقيع</th></tr>',
-        cacheGuards.map((g, i) => `<tr><td>${i+1}</td><td>${g.name}</td><td>${g.shift}</td><td>${g.title}</td><td></td></tr>`).join('')
-      );
-    }
-
-    function printPayrollA4() {
-      exportPDF('جدول تفريغ الرواتب والاستقطاعات الشهرية', 
-        '<tr><th>ت</th><th>اسم المنتسب</th><th>الراتب الأساسي</th><th>الخصومات والغرامات</th><th>صافي الراتب</th><th>التوقيع والاستلام</th></tr>',
-        cacheGuards.map((g, i) => {
-          const userFines = cacheFines.filter(f => f.name.trim() === g.name.trim() && f.status === 'تخصم من الراتب').reduce((sum, f) => sum + Number(f.amount || 0), 0);
-          return `<tr><td>${i+1}</td><td>${g.name}</td><td>${Number(g.salary || 0).toLocaleString()} د.ع</td><td>${userFines.toLocaleString()} د.ع</td><td><strong>${(Number(g.salary || 0) - userFines).toLocaleString()} د.ع</strong></td><td></td></tr>`;
-        }).join('')
-      );
-    }
-
-    function printFinesA4() {
-      exportPDF('كشف الجزاءات والغرامات المسجلة', 
-        '<tr><th>ت</th><th>اسم المخالف</th><th>سبب المخالفة</th><th>المبلغ</th><th>التاريخ</th></tr>',
-        cacheFines.map((f, i) => `<tr><td>${i+1}</td><td>${f.name}</td><td>${f.reason}</td><td>${Number(f.amount).toLocaleString()} د.ع</td><td>${f.date}</td></tr>`).join('')
-      );
-    }
-
-    function exportPDF(title, theadHtml, tbodyHtml) {
-      document.getElementById('print-title').innerText = title;
-      document.getElementById('print-date').innerText = new Date().toLocaleDateString('ar-IQ');
-      document.getElementById('print-time').innerText = new Date().toLocaleTimeString('ar-IQ');
-      document.getElementById('print-thead').innerHTML = theadHtml;
-      document.getElementById('print-tbody').innerHTML = tbodyHtml;
-
-      const element = document.getElementById('a4-print-template');
-      element.style.display = 'block';
-
-      html2pdf().from(element).set({
-        margin: 8,
-        filename: `${title}.pdf`,
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      }).save().then(() => element.style.display = 'none');
-    }
+    // التهيئة الأولية عند الفتح
+    window.onload = () => {
+      updateGateFields();
+    };
   </script>
 </body>
 </html>
