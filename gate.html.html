@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>بوابة مشروع سمنت الامير - مسؤول البوابة</title>
   
+  <!-- Google Fonts: Cairo -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
+  <!-- Firebase CDN -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -29,14 +31,14 @@
     }
 
     * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
-    body { background-color: var(--bg-gradient); color: var(--text-dark); padding: 15px; display: flex; justify-content: center; }
+    body { background-color: var(--bg-gradient); color: var(--text-dark); padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
 
     .mobile-card {
       background: var(--card-white);
       border-radius: 20px;
       padding: 20px;
       width: 100%;
-      max-width: 450px;
+      max-width: 480px;
       border: 1px solid var(--border-color);
       box-shadow: 0 10px 25px rgba(0,0,0,0.08);
       position: relative;
@@ -48,7 +50,7 @@
       margin-bottom: 15px;
       border-bottom: 2px solid #f1f5f9;
     }
-    .header-box img { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--accent-cyan); margin-bottom: 6px; }
+    .header-box img { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--accent-cyan); margin-bottom: 6px; object-fit: cover; }
     .header-box h2 { font-size: 16px; font-weight: 900; color: var(--primary-deep); }
     .header-box h3 { font-size: 13px; font-weight: 800; color: var(--primary-blue); }
 
@@ -68,7 +70,7 @@
       20%, 60% { transform: translateX(-6px); }
       40%, 80% { transform: translateX(6px); }
     }
-    #ban-alert-box h4 { color: var(--danger-red); font-size: 15px; font-weight: 900; }
+    #ban-alert-box h4 { color: var(--danger-red); font-size: 14px; font-weight: 900; }
     #ban-alert-box p { color: #991b1b; font-size: 12px; font-weight: 700; margin-top: 4px; }
 
     .form-group { margin-bottom: 12px; }
@@ -96,12 +98,14 @@
       cursor: pointer;
       margin-top: 10px;
       box-shadow: 0 4px 12px rgba(2, 136, 209, 0.25);
+      transition: 0.2s;
     }
+    .btn-submit:hover { opacity: 0.95; }
     .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; }
 
     .officer-badge {
       background: rgba(2, 136, 209, 0.08);
-      padding: 8px 12px;
+      padding: 10px 12px;
       border-radius: 10px;
       border: 1px dashed var(--primary-blue);
       margin-bottom: 15px;
@@ -117,14 +121,14 @@
       <h3>🏗️ بوابة مشروع سمنت الامير</h3>
     </div>
 
-    <!-- كارت التحذير عند كشف ممنوع من الدخول -->
+    <!-- تحذير الممنوعين -->
     <div id="ban-alert-box">
-      <h4>🚫 تحذير أمني: الشخص ممنوع من الدخول!</h4>
+      <h4>🚫 تحذير أمني: الاسم أو المركبة محظورة!</h4>
       <p id="ban-reason-text">سبب المنع: مدرج في قائمة الحظر المركزية</p>
     </div>
 
     <form id="gateForm">
-      <!-- 1. حقل اسم مسؤول الباب -->
+      <!-- اسم مسؤول الباب -->
       <div class="officer-badge">
         <div class="form-group" style="margin-bottom: 0;">
           <label style="color: var(--primary-dark);">👮 اسم مسؤول الباب المكلف</label>
@@ -132,40 +136,42 @@
         </div>
       </div>
 
-      <!-- 2. الفئة / نوع الحركة (نفس ترتيب وحقول المنصة) -->
+      <!-- الفئات السبع المعتمدة في المنصة -->
       <div class="form-group">
         <label>الفئة / نوع الحركة</label>
         <select id="g-cat" onchange="updateGateFields()">
-          <option value="شاحنة حمل">شاحنة حمل</option>
-          <option value="آلية عمل">آلية عمل</option>
-          <option value="سيارة صغيرة">سيارة صغيرة</option>
-          <option value="زائر">زائر</option>
-          <option value="عامل">عامل</option>
+          <option value="شاحنة حمل">🚛 شاحنة حمل</option>
+          <option value="شاحنة نقل">🚚 شاحنة نقل</option>
+          <option value="سيارة صغيرة">🚗 سيارة صغيرة</option>
+          <option value="آليات">🚜 آليات</option>
+          <option value="زائر">👤 زائر</option>
+          <option value="عامل">👷 عامل</option>
+          <option value="مقاول">🏗️ مقاول</option>
         </select>
       </div>
 
-      <!-- 3. اسم الشخص/السائق (مع فحص الحظر اللحظي) -->
+      <!-- اسم الشخص/السائق -->
       <div class="form-group">
         <label id="lbl-g-name">اسم السائق الثلاثي</label>
         <input type="text" id="g-name" placeholder="أدخل الاسم..." oninput="checkBannedStatus()" required>
       </div>
 
-      <!-- 4. رقم المركبة / الهوية -->
+      <!-- رقم المركبة / الهوية -->
       <div class="form-group">
-        <label id="lbl-g-num">رقم المركبة / الآلية</label>
+        <label id="lbl-g-num">رقم المركبة / الشاحنة</label>
         <input type="text" id="g-num" placeholder="الرقم..." oninput="checkBannedStatus()">
       </div>
 
-      <!-- 5. نوع الحمولة / السبب -->
+      <!-- الحمولة / الملاحظات -->
       <div class="form-group">
         <label id="lbl-g-cargo">نوع الحمولة / المادة</label>
-        <input type="text" id="g-cargo" placeholder="نوع المادة...">
+        <input type="text" id="g-cargo" placeholder="التفاصيل...">
       </div>
 
-      <!-- 6. الجهة المستلمة / الوجهة -->
+      <!-- الوجهة / الجهة المستلمة -->
       <div class="form-group">
-        <label id="lbl-g-dest">الجهة المستلمة / المفرغة</label>
-        <input type="text" id="g-dest" placeholder="الجهة...">
+        <label id="lbl-g-dest">الجهة المستلمة / الوجهة</label>
+        <input type="text" id="g-dest" placeholder="الجهة القادم إليها...">
       </div>
 
       <button type="submit" id="btn-save" class="btn-submit">تأكيد وتسجيل الدخول للموقع</button>
@@ -173,7 +179,6 @@
   </div>
 
   <script>
-    // إعدادات قاعدة البيانات المستعملة في منصتك
     const firebaseConfig = {
       apiKey: "AIzaSyBY_BTqxCsfPTsMhU9YAE6yxn3ZxDOnGEs",
       authDomain: "portal-management-system.firebaseapp.com",
@@ -183,18 +188,18 @@
       messagingSenderId: "396326956695",
       appId: "1:396326956695:web:e290603d522a0f879683d2"
     };
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.database();
 
     let cacheBannedList = [];
 
-    // جلب أسماء الممنوعين من المنصة الرئيسية فورياً
+    // جلب أسماء المحظورين من المنصة الرئيسية فورياً
     db.ref('banned_list').on('value', snap => {
       const data = snap.val() || {};
       cacheBannedList = Object.values(data);
     });
 
-    // تحديث مسميات الحقول تماماً كما في المنصة الرئيسية
+    // تحديث مسميات الحقول الديناميكية للفئات السبع
     function updateGateFields() {
       const cat = document.getElementById('g-cat').value;
       const lblName = document.getElementById('lbl-g-name');
@@ -202,26 +207,36 @@
       const lblCargo = document.getElementById('lbl-g-cargo');
       const lblDest = document.getElementById('lbl-g-dest');
 
-      if (cat === 'شاحنة حمل' || cat === 'آلية عمل') {
+      if (cat === 'شاحنة حمل' || cat === 'شاحنة نقل') {
         lblName.innerText = "اسم السائق الثلاثي";
-        lblNum.innerText = "رقم المركبة / الآلية";
-        lblCargo.innerText = "نوع الحمولة / المادة";
-        lblDest.innerText = "الجهة المستلمة / المفرغة";
+        lblNum.innerText = "رقم المركبة / الشاحنة";
+        lblCargo.innerText = "نوع الحمولة / رقم المانفيست";
+        lblDest.innerText = "الجهة المستلمة / الشركة الناقلة";
+      } else if (cat === 'آليات') {
+        lblName.innerText = "اسم المشغل / السائق";
+        lblNum.innerText = "رقم / ترميز الآلية";
+        lblCargo.innerText = "نوع الآلية (شفل، حفارة...)";
+        lblDest.innerText = "القسم التابع له / الموقع";
       } else if (cat === 'سيارة صغيرة') {
-        lblName.innerText = "اسم السائق";
+        lblName.innerText = "اسم السائق / المسؤول";
         lblNum.innerText = "رقم السيارة / المحافظة";
-        lblCargo.innerText = "ملاحظات الحمولة / الأغراض";
+        lblCargo.innerText = "عدد الركاب / ملاحظات الحمولة";
         lblDest.innerText = "المقصد / القسم الزائر له";
-      } else if (cat === 'زائر' || cat === 'عامل') {
-        lblName.innerText = "الاسم الكامل للزائر/العامل";
+      } else if (cat === 'زائر') {
+        lblName.innerText = "الاسم الكامل للزائر";
         lblNum.innerText = "رقم الهوية / الهاتف";
-        lblCargo.innerText = "سبب الدخول / طبيعة العمل";
+        lblCargo.innerText = "سبب الزيارة / طبيعة العمل";
         lblDest.innerText = "الجهة القادم إليها / المسؤول";
+      } else if (cat === 'عامل' || cat === 'مقاول') {
+        lblName.innerText = "الاسم الكامل";
+        lblNum.innerText = "رقم الهوية / الهاتف";
+        lblCargo.innerText = "المسمى الوظيفي / الاختصاص";
+        lblDest.innerText = "اسم الشركة / المقاولة / موقع العمل";
       }
       checkBannedStatus();
     }
 
-    // التحقق اللحظي من الحظر أثناء كتابة الاسم أو رقم الهوية/المركبة
+    // التحقق اللحظي من الحظر أثناء الكتابة
     function checkBannedStatus() {
       const nameVal = document.getElementById('g-name').value.trim().toLowerCase();
       const numVal = document.getElementById('g-num').value.trim().toLowerCase();
@@ -235,7 +250,6 @@
         return;
       }
 
-      // البحث داخل قائمة المنع المفردة من المنصة
       const foundBan = cacheBannedList.find(item => {
         const matchName = item.name && nameVal && item.name.toLowerCase().includes(nameVal);
         const matchNum = item.num && numVal && item.num.toLowerCase().includes(numVal);
@@ -244,15 +258,15 @@
 
       if (foundBan) {
         alertBox.style.display = 'block';
-        reasonText.innerText = `سبب المنع: ${foundBan.reason || 'مدرج في أمر المنع المركزي'}`;
-        btnSave.disabled = true; // إغلاق زر الدخول نهائياً
+        reasonText.innerText = `سبب المنع: ${foundBan.reason || 'مدرج في قائمة الحظر المركزية'}`;
+        btnSave.disabled = true;
       } else {
         alertBox.style.display = 'none';
         btnSave.disabled = false;
       }
     }
 
-    // إرسال البيانات المباشرة للمنصة الرئيسية
+    // إرسال الحركات المباشرة للمنصة الرئيسية
     document.getElementById('gateForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -260,25 +274,34 @@
       const name = document.getElementById('g-name').value.trim();
 
       if (!officer) return alert('يرجى كتابة اسم مسؤول الباب أولاً');
-      if (!name) return alert('يرجى ادخال اسم الشخص/السائق');
+      if (!name) return alert('يرجى ادخال الاسم الكامل');
 
-      db.ref('active_records').push({
+      const payload = {
         officer: officer,
-        name: name,
         cat: document.getElementById('g-cat').value,
-        num: document.getElementById('g-num').value,
-        cargo: document.getElementById('g-cargo').value,
-        dest: document.getElementById('g-dest').value,
+        f1: name,
+        f2: document.getElementById('g-num').value.trim(),
+        f3: document.getElementById('g-dest').value.trim(),
+        f4: document.getElementById('g-cargo').value.trim(),
         time: new Date().toLocaleTimeString('ar-IQ')
-      }).then(() => {
-        alert('✅ تم حفظ وتسجيل الدخول بنجاح وإرسال السجل للمنصة الرئيسية!');
+      };
+
+      db.ref('active_records').push(payload).then(() => {
+        alert('✅ تم تسجيل الدخول بنجاح وإرسال السجل للمنصة الرئيسية!');
         document.getElementById('g-name').value = '';
         document.getElementById('g-num').value = '';
         document.getElementById('g-cargo').value = '';
         document.getElementById('g-dest').value = '';
         checkBannedStatus();
+      }).catch(err => {
+        alert('حدث خطأ أثناء الاتصال بالمنصة: ' + err.message);
       });
     });
+
+    // التهيئة الأولية عند الفتح
+    window.onload = () => {
+      updateGateFields();
+    };
   </script>
 </body>
 </html>
